@@ -46,6 +46,8 @@ export interface IPhoneInputProps {
   regions?: Region | Region[];
   /** Adds a custom class to the Phonenumber Input Field */
   className?: string;
+  /** Render a custom child component */
+  ChildComponent?: FC<IPhoneInputProps>;
 }
 
 export const PhoneInput: FC<IPhoneInputProps> = ({
@@ -62,6 +64,7 @@ export const PhoneInput: FC<IPhoneInputProps> = ({
   placeholder,
   onFocus,
   onBlur,
+  ChildComponent = null
 }) => {
   const initialCountry = getInitialCountry(defaultCountry, preferredCountries, regions);
   const isInternational = format === 'INTERNATIONAL';
@@ -158,6 +161,16 @@ export const PhoneInput: FC<IPhoneInputProps> = ({
 
     setPhoneNumber(formated.length > 0 ? formated : value);
   };
+
+  if (ChildComponent) {
+    return (
+      <ChildComponent
+        FlagIcon={FlagIcon}
+        countries={getCountryList(preferredCountries, regions).filter(country => !country.isAreaCode)}
+        code={iso2.toLocaleLowerCase()}
+        phoneNumber={phoneNumber}
+      />);
+  }
 
   return (
     <div className="react-phonenr-input" ref={phoneInputWrapper}>
